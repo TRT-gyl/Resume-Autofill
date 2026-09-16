@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>投递记录 · 简历自动填充</title>
+  <link rel="stylesheet" href="records.css">
+</head>
+<body>
+  <div class="bg-ornaments" aria-hidden="true">
+    <div class="blob blob-a"></div>
+    <div class="blob blob-b"></div>
+    <div class="blob blob-c"></div>
+    <div class="blob blob-d"></div>
+    <div class="blob blob-e"></div>
+  </div>
+  <main class="page-shell">
+    <header class="hero">
+      <div class="hero-brand">
+        <img class="hero-logo" src="../icons/icon128.png" alt="简历自动填充 Logo">
+        <div>
+          <p class="eyebrow">JOB APPLICATIONS</p>
+          <h1>投递记录</h1>
+        </div>
+      </div>
+      <section class="overview-toolbar" aria-label="投递概览与记录操作">
+        <div class="stats" role="group" aria-label="投递概览">
+          <article class="stat-card stat-total">
+            <span>全部记录</span>
+            <strong id="stat-total">0</strong>
+            <button id="btn-todo-filter" class="todo-reminder" type="button" aria-pressed="false" aria-controls="records-body" aria-label="筛选未完成待办">
+              待办 <b id="stat-todo" aria-live="polite">0</b>
+            </button>
+          </article>
+          <article class="stat-card stat-status stat-pending" data-status="待投递">
+            <span>待投递</span>
+            <strong id="stat-pending">0</strong>
+          </article>
+          <article class="stat-card stat-status stat-assessment" data-status="已测评">
+            <span>已测评</span>
+            <strong id="stat-assessment">0</strong>
+          </article>
+          <article class="stat-card stat-status stat-written" data-status="已笔试">
+            <span>已笔试</span>
+            <strong id="stat-written">0</strong>
+          </article>
+          <article class="stat-card stat-status stat-interview" data-status="面试中">
+            <span>面试中</span>
+            <strong id="stat-interview">0</strong>
+          </article>
+          <article class="stat-card stat-status stat-offer" data-status="offer">
+            <span>Offer</span>
+            <strong id="stat-offer">0</strong>
+          </article>
+        </div>
+        <div class="hero-actions">
+          <button id="btn-new" class="button button-primary" type="button">＋ 新建记录</button>
+          <button id="btn-import" class="button" type="button">导入 CSV</button>
+          <button id="btn-export" class="button" type="button">导出 CSV</button>
+          <input id="csv-input" type="file" accept=".csv,text/csv" hidden>
+        </div>
+      </section>
+    </header>
+
+    <section class="panel filter-panel" aria-label="筛选条件">
+      <div class="filter-grid">
+        <label class="control control-wide">
+          <span>搜索</span>
+          <input id="filter-query" type="search" placeholder="公司、岗位、网站、备注、待办">
+        </label>
+        <label class="control">
+          <span>状态</span>
+          <select id="filter-status">
+            <option value="">全部状态</option>
+            <option>待投递</option>
+            <option>已投递</option>
+            <option>已测评</option>
+            <option>已笔试</option>
+            <option>面试中</option>
+            <option>offer</option>
+            <option>终止</option>
+          </select>
+        </label>
+        <label class="control">
+          <span>工作地点</span>
+          <input id="filter-location" type="text" placeholder="如：上海">
+        </label>
+        <label class="control">
+          <span>开始日期</span>
+          <input id="filter-from" type="date">
+        </label>
+        <label class="control">
+          <span>结束日期</span>
+          <input id="filter-to" type="date">
+        </label>
+        <label class="control">
+          <span>排序</span>
+          <select id="sort-field">
+            <option value="updatedAt">最近更新</option>
+            <option value="appliedAt">投递日期</option>
+            <option value="companyName">公司名称</option>
+            <option value="jobTitle">岗位名称</option>
+            <option value="status">投递状态</option>
+          </select>
+        </label>
+        <label class="control">
+          <span>顺序</span>
+          <select id="sort-direction">
+            <option value="desc">降序</option>
+            <option value="asc">升序</option>
+          </select>
+        </label>
+        <button id="btn-clear-filters" class="button button-compact" type="button">清空筛选</button>
+      </div>
+    </section>
+
+    <section class="panel table-panel">
+      <div class="table-scroll">
+        <table>
+          <colgroup>
+            <col class="col-company">
+            <col class="col-unit">
+            <col class="col-job">
+            <col class="col-preference">
+            <col class="col-status">
+            <col class="col-date">
+            <col class="col-todo">
+            <col class="col-location">
+            <col class="col-source">
+            <col class="col-actions">
+          </colgroup>
+          <thead>
+            <tr>
+              <th>总公司</th>
+              <th>分公司</th>
+              <th>岗位</th>
+              <th>志愿</th>
+              <th>状态</th>
+              <th>投递日期</th>
+              <th>待办倒计时</th>
+              <th>工作地点</th>
+              <th>来源</th>
+              <th class="actions-column">操作</th>
+            </tr>
+          </thead>
+          <tbody id="records-body"></tbody>
+        </table>
+      </div>
+      <div id="empty-state" class="empty-state" hidden>
+        <div class="empty-icon">⌁</div>
+        <h3 id="empty-title">还没有符合条件的投递记录</h3>
+        <p id="empty-description">可以从插件弹窗记录当前职位，或在这里手动新建。</p>
+        <button id="btn-empty-new" class="button button-primary" type="button">新建第一条记录</button>
+      </div>
+      <footer class="table-footer">
+        <p id="result-summary">共 0 条</p>
+        <div id="pagination" class="pagination" aria-label="分页" hidden>
+          <label class="page-size-control" for="page-size">
+            <span>每页</span>
+            <select id="page-size">
+              <option value="10" selected>10 条</option>
+              <option value="20">20 条</option>
+              <option value="50">50 条</option>
+            </select>
+          </label>
+          <button id="btn-page-prev" class="page-button" type="button" aria-label="上一页">‹</button>
+          <span id="page-indicator" class="page-indicator">第 1 / 1 页</span>
+          <button id="btn-page-next" class="page-button" type="button" aria-label="下一页">›</button>
+        </div>
+      </footer>
+    </section>
+  </main>
+
+  <dialog id="record-dialog" class="record-dialog">
+    <form id="record-form" method="dialog">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow">APPLICATION</p>
+          <h2 id="dialog-title">新建投递记录</h2>
+        </div>
+        <button id="btn-dialog-close" class="icon-button" type="button" aria-label="关闭">×</button>
+      </div>
+      <input id="record-id" type="hidden">
+      <p id="record-analysis-status" class="record-analysis-status" role="status" hidden></p>
+      <div class="form-grid">
+        <div class="record-company-row">
+          <label id="record-company-control" class="control">
+            <span id="record-company-label">公司名称</span>
+            <input id="record-company" type="text" maxlength="120" placeholder="如：某某科技">
+          </label>
+          <button id="btn-add-preference" class="button" type="button">＋ 添加志愿</button>
+        </div>
+        <label id="record-job-control" class="control">
+          <span>岗位名称</span>
+          <input id="record-job" type="text" maxlength="160" placeholder="如：算法工程师">
+        </label>
+        <section id="batch-section" class="batch-section" hidden>
+          <div class="batch-heading">
+            <strong id="batch-title">待保存志愿</strong>
+            <span>拖动左侧志愿标签调整顺序，确认分公司、岗位和工作地点后一起保存。</span>
+          </div>
+          <div class="batch-column-headings" aria-hidden="true">
+            <span>志愿</span>
+            <span>分公司 / 所属单位</span>
+            <span>岗位名称</span>
+            <span>工作地点</span>
+            <span>操作</span>
+          </div>
+          <div id="batch-jobs" class="batch-jobs"></div>
+          <p id="batch-reorder-status" class="batch-reorder-status" role="status" aria-live="polite"></p>
+        </section>
+        <div class="record-metadata-row">
+          <label class="control">
+            <span>投递状态</span>
+            <select id="record-status">
+              <option>待投递</option>
+              <option selected>已投递</option>
+              <option>已测评</option>
+              <option>已笔试</option>
+              <option>面试中</option>
+              <option>offer</option>
+              <option>终止</option>
+            </select>
+          </label>
+          <label class="control">
+            <span>投递日期</span>
+            <input id="record-date" type="date">
+          </label>
+          <label id="record-source-control" class="control">
+            <span>来源站点</span>
+            <input id="record-source-site" type="text" maxlength="120" placeholder="如：校园招聘官网">
+          </label>
+          <label class="control">
+            <span>职位链接</span>
+            <input id="record-url" type="url" maxlength="2000" placeholder="https://...">
+          </label>
+        </div>
+        <label id="record-location-control" class="control">
+          <span>工作地点</span>
+          <input id="record-location" type="text" maxlength="120" placeholder="如：北京">
+        </label>
+        <label class="control control-full">
+          <span>备注</span>
+          <textarea id="record-notes" rows="4" maxlength="3000" placeholder="笔试时间、联系人、跟进事项等"></textarea>
+        </label>
+      </div>
+      <p id="form-error" class="form-error" role="alert"></p>
+      <div class="dialog-actions">
+        <button id="btn-dialog-cancel" class="button" type="button">取消</button>
+        <button class="button button-primary" type="submit">保存记录</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="todo-dialog" class="record-dialog todo-dialog" aria-labelledby="todo-dialog-title" aria-describedby="todo-record-label">
+    <form id="todo-form">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow">TO DO</p>
+          <h2 id="todo-dialog-title">设置待办倒计时</h2>
+        </div>
+        <button id="btn-todo-close" class="icon-button" type="button" aria-label="关闭待办设置">×</button>
+      </div>
+      <p id="todo-record-label" class="todo-record-label"></p>
+      <div class="form-grid">
+        <label class="control control-full">
+          <span>待办事项</span>
+          <input id="todo-title" type="text" maxlength="120" required placeholder="如：完成测评、参加笔试、参加面试" aria-describedby="todo-status-preview" autofocus>
+        </label>
+        <label class="control control-full">
+          <span>截止方式</span>
+          <select id="todo-mode">
+            <option value="afterApplication">投递日期后 N 天内完成</option>
+            <option value="fixedDate">指定截止日期</option>
+          </select>
+        </label>
+        <label id="todo-days-control" class="control control-full">
+          <span>投递后天数</span>
+          <input id="todo-days" type="number" min="1" max="3650" step="1" required value="10">
+        </label>
+        <label id="todo-date-control" class="control control-full" hidden>
+          <span>截止时间</span>
+          <input id="todo-date" type="datetime-local" disabled>
+        </label>
+      </div>
+      <p id="todo-deadline-preview" class="todo-deadline-preview" role="status"></p>
+      <p id="todo-status-preview" class="todo-status-preview" role="status"></p>
+      <p id="todo-error" class="form-error" role="alert"></p>
+      <div class="dialog-actions">
+        <button id="btn-todo-complete" class="button todo-complete" type="button" hidden aria-pressed="false">已完成此待办</button>
+        <button id="btn-todo-remove" class="button todo-remove" type="button" hidden>移除待办</button>
+        <button id="btn-todo-cancel" class="button" type="button">取消</button>
+        <button id="btn-todo-save" class="button button-primary" type="submit">保存待办</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="application-records-core.js"></script>
+  <script src="../shared/enhancements-core.js"></script>
+  <script src="enhancements.js"></script>
+  <script src="records.js"></script>
+</body>
+</html>
