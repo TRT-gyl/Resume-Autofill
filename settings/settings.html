@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>简历助手 · 增强设置</title><link rel="stylesheet" href="settings.css"></head>
+<body><main><header><p>简历自动填充 · 1.8.0</p><h1>增强设置与恢复</h1><p>默认沿用原有填写方式。你可以按需打开增强功能。</p></header>
+<section><h2>填写设置</h2>
+<label><input type="checkbox" id="protect-manual">保护本页手动修改</label><p>开启后，自动填写保留你在网页中手动修改或清空的字段。刷新页面后重新记录操作。</p>
+<label><input type="checkbox" id="ai-enhanced">AI 增强校验</label><p>仅发送明确相关的简历区块，并核验模型提供的资料来源。不能核实的内容留在填写结果中，供你手动处理。</p></section>
+<section><h2>网站字段规则</h2><p>规则只在你保存的网站生效，补充内置规则尚未识别的字段。</p><div id="rules"></div></section>
+<section><h2>简历备份</h2><p>保留最近 3 份导入或恢复前的简历，包含照片，不包含 API Key。恢复不会修改投递记录、模型设置和网站规则。</p><button id="refresh-backups">刷新备份</button><div id="backups"></div></section>
+<p id="status" role="status" aria-live="polite"></p></main>
+<script src="../shared/enhancements-core.js"></script><script src="settings.js"></script></body></html>
