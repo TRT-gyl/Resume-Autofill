@@ -22,7 +22,7 @@
 
 打开可识别的招聘表单后，点击“自动填充”，按字段含义、经历区块和已有网站规则填写。完成后查看填写报告，继续处理未匹配或未通过核验的字段；最终由你核对并保存或提交。
 
-![Suggestions](D:\Agent\Doubao\resume-autofill-main\open-source\resume-autofill-extension\docs\screenshots\Suggestions.png)
+![Suggestions](docs/screenshots/Suggestions.png)
 
 ### 3. 大模型填充：为难匹配字段提供可选辅助
 
@@ -36,13 +36,13 @@
 
 点击输入框，即可查看相关简历内容；开启“自动推荐”时，匹配后可自动写入，也可关闭开关后手动点选。开启“追加填写”，可把多条技能、奖励或项目说明组合进同一个文本框；“记住对应”可保存当前网站的字段规则。
 
-![Suggestions](D:\Agent\Doubao\resume-autofill-main\open-source\resume-autofill-extension\docs\screenshots\Suggestions.png)
+![Suggestions](docs/screenshots/Suggestions.png)
 
 ### 5. 投递记录：把网申进度与后续待办放在一起
 
 从“记录当前职位”预填记录，或在投递记录页手动新建，统一查看企业、岗位、日期与状态，按需筛选并导入导出 CSV。为测评、笔试、面试设置截止时间，完成待办后同步对应投递状态；恢复待办时按规则回退，便于持续跟进。
 
-![JOBS](D:\Agent\Doubao\resume-autofill-main\open-source\resume-autofill-extension\docs\screenshots\JOBS.png)
+![JOBS](docs/screenshots/JOBS.png)
 
 
 
